@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Route, Link, Switch } from "react-router-dom";
 import OrderForm from "./Components/OrderForm";
 import Order from "./Components/Order";
-import axios from "axios";
+//import axios from "axios";
 import * as yup from "yup";
-import schema from ".//validation/formSchema";
+import schema from "./validation/formSchema";
 
 const initialFormValues = {
   name: "",
@@ -27,34 +27,10 @@ const initialOrders = [];
 const initialDisabled = true;
 
 const App = () => {
-  const [orders, setOrders] = useState(initialOrders); // array of user objects
-  const [formValues, setFormValues] = useState(initialFormValues); // object
-  const [formErrors, setFormErrors] = useState(initialFormErrors); // object
-  const [disabled, setDisabled] = useState(initialDisabled); // boolean
-
-  const getOrders = () => {
-    axios
-      .get("http://buddies.com/api/friends")
-      .then((res) => {
-        setOrders(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const postNewOrder = (newOrder) => {
-    axios
-      .post("http://buddies.com/api/friends", newOrder)
-      .then((res) => {
-        setOrders(res.data, ...orders);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => {
-        setFormValues(initialFormValues);
-      });
-  };
+  const [orders, setOrders] = useState(initialOrders);
+  const [formValues, setFormValues] = useState(initialFormValues);
+  const [formErrors, setFormErrors] = useState(initialFormErrors);
+  const [disabled, setDisabled] = useState(initialDisabled);
 
   const validate = (name, value) => {
     yup
@@ -81,12 +57,15 @@ const App = () => {
         (topping) => formValues[topping]
       ),
     };
-    postNewOrder(newOrder);
+    //if (!newOrder.name || !newOrder.size) return;
+
+    setOrders([newOrder, ...orders]);
+    setFormValues(initialFormValues);
   };
 
-  useEffect(() => {
-    getOrders();
-  }, []);
+  // useEffect(() => {
+  //   getOrders();
+  // }, []);
 
   useEffect(() => {
     schema.isValid(formValues).then((valid) => setDisabled(!valid));
@@ -115,14 +94,15 @@ const App = () => {
                 submit={formSubmit}
                 disabled={disabled}
                 errors={formErrors}
+                // update={updateForm}
               />
             );
           }}
         />
-        {orders.map((order) => {
-          return <Order key={order.id} details={order} />;
-        })}
       </Switch>
+      {orders.map((order, index) => {
+        return <Order key={index} details={order} />;
+      })}
     </>
   );
 };

@@ -1,7 +1,8 @@
 import React from "react";
+import Order from "./Order";
 
 const OrderForm = (props) => {
-  const { values, submit, change, disabled, errors } = props;
+  const { values, submit, change, disabled, errors, update } = props;
 
   const onSubmit = (evt) => {
     evt.preventDefault();
@@ -12,13 +13,13 @@ const OrderForm = (props) => {
     const { name, value, checked, type } = evt.target;
     const valueToUse = type === "checkbox" ? checked : value;
     change(name, valueToUse);
+    //update(name, valueToUse);
   };
 
   return (
     <form id="pizza-form" onSubmit={onSubmit}>
       <div className="form-group">
         <h2>Place Your Order</h2>
-        <button disabled={disabled}>Submit</button>
         <div className="errors">
           <div>{errors.name}</div>
           <div>{errors.size}</div>
@@ -83,7 +84,7 @@ const OrderForm = (props) => {
           />
         </label>
       </div>
-      <div className="form-group specialInstructions">
+      <div className="form-group special-text">
         <label>
           Special Instructions
           <input
@@ -93,6 +94,9 @@ const OrderForm = (props) => {
             value={values.specialInstructions}
           />
         </label>
+        <button id="order-button" disabled={disabled}>
+          Submit
+        </button>
       </div>
     </form>
   );
